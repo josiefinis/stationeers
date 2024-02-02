@@ -1,0 +1,188 @@
+======================================================================================================================================================
+# Airlock Specification
+======================================================================================================================================================
+
+
+
+           "inside"                   ┃           ┃            "outside"
+                                      ┃           ┃
+                                      ┃           ┃
+                      inner sensor -> ░           ░ <- outer sensor
+                                      ┃           ┃
+                                      ┣━━━━━━━━━━━┫           
+                                      │           │
+                                      │           │
+                        inner door -> │  airlock  │ <- outer door
+                                      │           │
+                                      │           │
+                                      ┣━▤▤━━━━━▤▤━┫
+                                      ┃ ↑       ↑ ┃
+                             inner vent ┘       └ outer vent
+                                      ┃           ┃
+                                      ┃           ┃
+                                      ┃           ┃
+                                      ┃           ┃
+                                      ┃           ┃
+                                      ┃           ┃
+
+
+
+## State Machine
+
+
+
+
+                        ┌------------------------------------------- outer console ---------┐
+                        │                                            OPEN                   │
+                        │                                                                   │
+                        ↓                                                                   │
+                        ┌------- outer console ---------┐   ┌------- inner console ---------┤
+                        ↓        OPEN                   │   ↓        CLOSE                  │                                │
+                ┏━━━━━━━━━━━┓                       ┏━━━┷━━━━━━━┓                       ┏━━━┷━━━━━━━┓                   ┏━━━━━━━━━━━┓
+                ┃ AIRLOCK   ┃                       ┃ AIRLOCK   ┃                       ┃ AIRLOCK   ┃                   ┃ SAFE      ┃
+                ┃ MATCH     ┠--- outer console ---->┃ CLOSED    ┠--- inner console ---->┃ MATCH     ┃                   ┃           ┠---- 
+                ┃ OUTER     ┃    CLOSE              ┃           ┃    OPEN               ┃ INNER     ┃                   ┃           ┃
+                ┗━━━━━━━┯━━━┛                       ┗━━━━━━━━━━━┛                       ┗━━━━━━━━━━━┛                   ┗━━━━━━━━━━━┛
+                        │                                                                   ↑
+                        └------- inner console ---------------------------------------------┘
+                                 OPEN
+                              
+                                  
+                                               
+
+
+### States
+* SAFE/MONITORING 
+    - open and close both doors together ( or maybe control doors manually? )
+    - monitor sensors for deviation from safe conditions
+
+* AIRLOCK CLOSED 
+    - both doors closed
+    - monitor sensors for return to safe conditions
+
+* AIRLOCK MATCH INNER 
+    - lock outer door
+    - match airlock to inner atmosphere
+    - open inner door on command
+    - open inner door when matched
+    - monitor sensors for return to safe conditions
+
+* AIRLOCK MATCH OUTER 
+    - ignore inner door console
+    - lock inner door?
+    - match airlock to outer atmosphere
+    - open outer door on command
+    - open outer door when matched
+    - monitor sensors for return to safe conditions
+
+
+* MANUAL OVERRIDE 
+    - control doors manually
+
+
+### State transition tables.
+
+
+SAFE/MONITORING
+======================================================================================================================================================================
+Next                        Input                                           Action
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            enter                                           set light GREEN
+                                                                            unlock doors
+                                                                            open doors 
+                                                                            
+                                                                            
+                            exit                                            
+
+                            inner door Setting OPEN                         open doors
+
+                            inner door Setting CLOSE                        close doors
+
+                            outer door Setting OPEN                         open doors
+
+                            outer door Setting CLOSE                        close doors
+                                                                            
+AIRLOCK CLOSED              sensors UNMATCHED                               
+AIRLOCK CLOSED              logic memory Setting CLOSE                  
+AIRLOCK CLOSED              sensors low pressure?                           set light ?
+AIRLOCK CLOSED              sensors loss of power?                          set light ?
+
+MANUAL OVERRIDE             override switch ON                              
+                                                                            
+======================================================================================================================================================================
+                                                                    
+                                                                    
+AIRLOCK CLOSED                                                            
+======================================================================================================================================================================
+Next                        Input                                           Action
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            enter                                           close doors
+                                                                            lock doors
+                                                                            set light RED
+                                                                            
+                                                                            
+                            exit                                            
+                                                                            
+                                                                            
+SAFE/MONITOR                sensors MATCHED && memory Setting OPEN
+
+AIRLOCK MATCH INNER         inner door Setting OPEN                              
+
+AIRLOCK MATCH OUTER         outer door Setting OPEN                              
+
+MANUAL OVERRIDE             override switch ON                              
+                                                                            
+======================================================================================================================================================================
+
+
+AIRLOCK MATCH INNER                                                                    
+======================================================================================================================================================================
+Next                        Input                                           Action
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            enter                                           close outer door
+                                                                            lock outer door
+                                                                            set doors Setting CLOSE
+                                                                            unlock inner door
+                                                                            set light ORANGE?
+                                                                            
+                            exit                                            
+                                                                            
+                                                                            
+                            inner door Setting OPEN                         open inner door
+
+                            inner door Setting CLOSE                        close inner door
+
+                            airlock PRESSURE < inner PRESSURE               set inner vent BLOWN
+                                                                            set inner vent ON
+
+                            airlock PRESSURE > inner PRESSURE               set inner vent SUCK
+                                                                            set inner vent ON
+
+                            airlock PRESSURE == inner PRESSURE              set inner vent OFF
+                                                                            open inner door
+
+
+SAFE/MONITOR                sensors MATCHED && NORMAL PRESSURE                               
+
+AIRLOCK MATCH OUTER         outer door Setting OPEN                         
+
+MANUAL OVERRIDE             override switch ON                              
+                                                                            
+======================================================================================================================================================================
+
+
+
+MANUAL OVERRIDE
+======================================================================================================================================================================
+Next                        Input                                           Action
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                            enter                                           flashy swirly light ON
+                                                                            vents OFF
+                                                                            unlock doors
+                                                                            open doors
+                                                                            doors Mode MANUAL
+
+                            exit                                            doors Mode LOGIC
+
+AIRLOCK CLOSED              override switch OFF
+======================================================================================================================================================================
