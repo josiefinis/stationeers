@@ -8,7 +8,7 @@ define BAD 0  # any lo O2|hi H2|hi X|hi N2O
 define OK 1   # not BAD
 define OKEQ 2 # all OK & equal
 define HIDP 3 # high delta P
-define MAX_DELTA_P 190 # kPa
+define HIGH_DELTA_P 190 # kPa
 define MAX_H2 0.005 # 0.5 %
 define MAX_X 0.005 # 0.5 %
 define MAX_N2O 0.005 # 0.5 %
@@ -85,7 +85,7 @@ l r0 dr1 Pressure
 l r3 dr2 Pressure
 sub r0 r0 r3
 abs r0 r0
-sgt r0 r0 MAX_DELTA_P 
+sgt r0 r0 HIGH_DELTA_P 
 push r0
 j ra # __________________________return r0
 isNotOK: # ( sensor_r1 )
