@@ -12,14 +12,16 @@ define HIGH_DELTA_P 190 # kPa
 define MAX_H2 0.005 # 0.5 %
 define MAX_X 0.005 # 0.5 %
 define MAX_N2O 0.005 # 0.5 %
-define MIN_P_O2 16 # kPa
+define MIN_P_O2 18 # kPa pp     (die below 16)
+define MAX_P 250 # kPa          (max comfortable)
+define MAX_T 312 # K            (max comfortable)
 define MAX_rdP 0.1  # relative difference
 define MAX_rdT 0.02 # relative difference
 define MAX_rdO2 0.1 # relative difference
 define MAX_rdN2 0.1 # relative difference
 alias ICHousing db
 alias atmStatus r14
-main: # ================================
+main: # ============================================
 s db Setting atmStatus
 yield
 jal checkDeviceCount
@@ -29,8 +31,7 @@ beq atmStatus HIDP main
 jal checkOK
 beq atmStatus BAD main
 jal checkEQ
-j main # ===============================
-
+j main # ===========================================
 checkDeviceCount: # check device count == 3
 move atmStatus ERR
 move r0 N_SENSORS
@@ -38,7 +39,7 @@ sub r0 r0 1
 bdns dr0 ra
 brgtz r0 -2
 move atmStatus 0
-j ra # ________________return 
+j ra # _______________________________________return
 checkHIDP: # check delta P won't break door
 move atmStatus HIDP
 move r2 0
@@ -52,7 +53,7 @@ pop ra
 bnez r0 ra
 bgtz r1 loop0   # } while ( r1 > 0 )
 move atmStatus 0 
-j ra # __________________________return 
+j ra # _______________________________________return
 checkOK: # Check all atm OK
 move atmStatus BAD
 move r1 N_SENSORS
@@ -65,7 +66,7 @@ pop ra
 bnez r0 ra
 bgtz r1 loop1  # } while ( r1 > 0 )
 move atmStatus OK 
-j ra # __________________________return 
+j ra # _______________________________________return
 checkEQ: # Check all atm equal
 move atmStatus OK
 move r2 0
@@ -79,16 +80,16 @@ pop ra
 bnez r0 ra
 bgtz r1 loop2 # } while ( r1 > 0 )
 move atmStatus OKEQ 
-j ra # __________________________return 
-isHIDP: # sensor_r1, sensor_r2 )
+j ra # _______________________________________return
+isHIDP: # f ( sensor_r1, sensor_r2 )
 l r0 dr1 Pressure
 l r3 dr2 Pressure
 sub r0 r0 r3
 abs r0 r0
 sgt r0 r0 HIGH_DELTA_P 
 push r0
-j ra # __________________________return r0
-isNotOK: # ( sensor_r1 )
+j ra # ____________________________________return r0
+isNotOK: # f ( sensor_r1 )
 push 1
 l r0 dr1 RatioVolatiles
 bgt r0 MAX_H2 ra
@@ -98,12 +99,15 @@ l r0 dr1 RatioNitrousOxide
 bgt r0 MAX_N2O ra
 l r0 dr1 RatioOxygen
 l r2 dr1 Pressure
+bgt r0 MAX_P ra
 mul r0 r0 r2
 blt r0 MIN_P_O2 ra
+l r0 dr1 Temperature
+bgt r0 MAX_T ra
 pop r0
 push 0
-j ra # __________________________return 0
-isNotEQ: # ( sensor_r1, sensor_r2 )
+j ra # _____________________________________return 0
+isNotEQ: # f ( sensor_r1, sensor_r2 )
 push 1
 l r0 dr1 Pressure
 l r3 dr2 Pressure
@@ -119,4 +123,4 @@ l r3 dr2 RatioNitrogen
 bna r0 r3 MAX_rdN2 ra
 pop r0
 push 0
-j ra # __________________________return 0
+j ra # _____________________________________return 0
