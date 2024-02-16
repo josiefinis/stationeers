@@ -1,7 +1,7 @@
 # Stationeers
 ## Airlock
 ### Network connections
-´´´
+
                       ┏━━━━━━━━━━━━━━━━━━━━━━━┓
                  db ──┨ airlock controller IC ┃
                       ┗━┯━━━┯━━━┯━━━┯━━━┯━━━┯━┛
@@ -28,7 +28,9 @@
                                                         gas sensor AL ┠─────┘
                                                 
                                 
-´´´
+
+
+
         
 ### Operation
 
@@ -40,7 +42,7 @@ Automatic operation depends on the atmosphere either side of the airlock, as det
 There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
 
 #### Atmospheres OK and Equalised ( OKEQ )
-´´´
+
                     ┃           ┃                       ┃           ┃
                     ┃           ┃                       ┃           ┃   
                     ┣━━━━━━━━━━━┫                       ┣━━━━━━━━━━━┫   
@@ -52,13 +54,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
            press -> ┣━▤▤━━━━━▤▤━┫                       ┣━▤▤━━━━━▤▤━┫
                     ┃           ┃                       ┃           ┃   
                     ┃           ┃                       ┃           ┃
-´´´
+
 * OKEQ is active when the atmospheres on each side of the airlock have equal pressure and temperature, are breathable, and have acceptably low levels of volatiles, pollutant and nitrous oxide. 
 * It is indicated by a green status light.
 * Both doors open and close together.
 
 #### Atmospheres are OK but not equalised ( OK )
-´´´
+
                     ┃  P0 < P1  ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫
@@ -70,7 +72,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
            press -> ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫
                     ░           ░               ░           ░->>            ░           ░               ░           ░<<-            ░           ░
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
-´´´
+
 * OK is active when the atmospheres on each side of the airlock are breathable and have acceptably low levels of volatiles, pollutant and nitrous oxide, but differ in pressure or temperature.
 * It is indicated by a green status light, or a yellow status light when the airlock is cycling.
 * When a door control button is pressed, the pressure in the airlock will be equalised with the atmosphere facing that door.
@@ -80,7 +82,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
 * If either door control is pressed mid-cycle the door will open immediately ( with no safety checks ).
 
 #### Unbreathable or dangerous ( BAD )
-´´´
+
                     ┃  P0 < P1  ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫
@@ -106,7 +108,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫
                  <<-░           ░               ░           ░<<-            ░           ░
                     ┃           ┃               ┃           ┃               ┃           ┃
-´´´
+
 * BAD is active when any of the three gas sensors detects insufficient oxygen ( < 16 kPa partial pressure ), or excessive levels of volatiles, pollutant or nitrous oxide. 
 * It is indicated by an orange status light, or a red status light when the airlock is cycling.
 * The airlock functions the same as for OK, but the airlock will be purged before equalising.
@@ -115,7 +117,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
 * If either door control is pressed mid-purge the airlock will skip ahead and proceed to equalise the airlock.
 
 #### High differential pressure ( HIDP )
-´´´
+
                     ┃ P0 << P1  ┃                   ┃           ┃               
                     ┃           ┃                   ┃           ┃               
                     ┣━━━━━━━━━━━┫                   ┣━━━━━━━━━━━┫               
@@ -127,7 +129,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┣━▤▤━━━━━▤▤━┫                   ┣━▤▤━━━━━▤▤━┫               
                     ░           ░->>                ░           ░<<-            
                     ┃           ┃                   ┃           ┃               
-´´´
+
 * HIDP is active when the differential pressure between atmosphere 0 and 1 is close to exceeding what a single door can withstand.
 * It is indicated by a blue status light.
 * The threshold limit is defined by HIGH_DELTA_P in ALGasSensorIC.asm.
@@ -138,7 +140,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
 * If the airlock contained atmosphere from the now low pressure side it may be vented to the opposite side ( hence 'almost' ).
 
 #### Extreme differential pressure ( HIDP and ΔP > max ΔP )
-´´´
+
                     ┃ P0 << P   ┃               
                     ┃           ┃               
                     ┣━━━━━━━━━━━┫               
@@ -150,7 +152,7 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┣━▤▤━━━━━▤▤━┫               
                  <<-░           ░<<-            
                     ┃           ┃               
-´´´
+
 * This occurs when the differential pressure is close to exceeding what two doors can withstand together.
 * The limit is defined by MAXDP in ALControllerIC.asm.
 * It is indicated by a blue status light.
