@@ -12,7 +12,7 @@ define HIGH_DELTA_P 190 # kPa
 define MAX_H2 0.005 # 0.5 %
 define MAX_X 0.005 # 0.5 %
 define MAX_N2O 0.005 # 0.5 %
-define MIN_P_O2 18 # kPa pp     (die below 16)
+define MIN_P_O2 18 # kPa pp     (die below 16 kPa)
 define MAX_P 250 # kPa          (max comfortable)
 define MAX_T 312 # K            (max comfortable)
 define MAX_rdP 0.1  # relative difference

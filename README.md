@@ -2,15 +2,17 @@
 ## Airlock
 ### Network connections
 
-                      ┏━━━━━━━━━━━━━━━━━━━━━━━┓
-                 db ──┨ airlock controller IC ┃
-                      ┗━┯━━━┯━━━┯━━━┯━━━┯━━━┯━┛
-                        │   │   │   │   │   │   
-                        d0  d1  d2  d3  d4  d5  
-                        │   │   │   │   │   │   
-    door 0 ┠────────────┘   │   │   │   │   │
-        door 1 ┠────────────┘   │   │   │   │
-            vent 0 ┠────────────┘   │   │   │
+
+                      ┏━━━━━━━━━━━━━━━━━━━━━━━┓                 
+                 db ──┨ airlock controller IC ┃- - - - - - - - -Named batch network connections
+                      ┗━┯━━━┯━━━┯━━━┯━━━┯━━━┯━┛                     "Sensor 0"
+                        │   │   │   │   │   │                       "Sensor 1"
+                        d0  d1  d2  d3  d4  d5                      "Airlock Sensor"
+                        │   │   │   │   │   │                   
+                        │   │   │   │   │   │                   Other batch network connections
+    door 0 ┠────────────┘   │   │   │   │   │                       Manual Override Lever
+        door 1 ┠────────────┘   │   │   │   │                       Status Light LED
+            vent 0 ┠────────────┘   │   │   │                       Pressure Gauge Diode Slide
                 vent 1 ┠────────────┘   │   │
                     override light ┠────┘   │
                                             │
@@ -23,9 +25,9 @@
                                                                     │   │   │  
                                                                     d0  d1  d2  
                                                                     │   │   │
-                                                gas sensor 0 ┠──────┘   │   │
-                                                    gas sensor 1 ┠──────┘   │
-                                                        gas sensor AL ┠─────┘
+                                                Sensor 0 ┠──────────┘   │   │
+                                                    Sensor 1 ┠──────────┘   │
+                                                        Airlock Sensor ┠────┘
                                                 
                                 
 
@@ -33,6 +35,22 @@
 
         
 ### Operation
+
+
+           atmosphere 0         ┃                ┃       atmosphere 1
+                                ┃                ┃
+                                ┣━━━━━━━━━━━━━━━━┫
+                                │                │
+                                │                │
+                                │                │
+                      door 0 -> │                │ <- door 1
+                                │                │
+                                │vent 0    vent 1│
+                                │  ↓          ↓  │
+                                ┣━##━━━━━━━━━━##━┫
+                                # ┘┘          └└ # 
+                                ┃                ┃
+
 
 #### Manual override
 * Manual override is set by setting any of the manual override levers.
@@ -46,13 +64,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃           ┃                       ┃           ┃
                     ┃           ┃                       ┃           ┃   
                     ┣━━━━━━━━━━━┫                       ┣━━━━━━━━━━━┫   
-                    │           │                                    
+                    │  <green>  │                          <green>   
                     │           │                                    
               ^_^   │           │                           = ^_^
                     │           │                                    
                     │           │                                    
-           press -> ┣━▤▤━━━━━▤▤━┫                       ┣━▤▤━━━━━▤▤━┫
-                    ┃           ┃                       ┃           ┃   
+           press -> ┣━##━━━━━##━┫                       ┣━##━━━━━##━┫
+                    #           #                       #           #   
                     ┃           ┃                       ┃           ┃
 
 * OKEQ is active when the atmospheres on each side of the airlock have equal pressure and temperature, are breathable, and have acceptably low levels of volatiles, pollutant and nitrous oxide. 
@@ -64,13 +82,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃  P0 < P1  ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫
-                    │                           │           │                  press -> │               │           │               │            
-                    │                           │           │                           │               │           │               │            
-              ^_^   │                     ^_^   │           │                    ^_^    │               │    ^_^    │               │               ^_^
-                    │                           │           │                           │               │           │               │            
-                    │                           │        ↓↓ │                           │               │        ↑↑ │               │            
-           press -> ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫
-                    ░           ░               ░           ░->>            ░           ░               ░           ░<<-            ░           ░
+                    │  <green>                  │ <yellow>  │                  <green>  │               │ <yellow>  │               │  <green>   
+                    │                           │  P -> P0  │                           │               │  P -> P1  │               │            
+              ^_^   │                     ^_^   │           │                    ^_^    │               │           │               │               ^_^
+                    │                           │           │                           │               │   ^_^     │               │            
+                    │                           │        ↓↓ │                  press -> │               │        ↑↑ │               │            
+           press -> ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫
+                    #           #               #           #->             #           #               #           #<-             #           #
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
 
 * OK is active when the atmospheres on each side of the airlock are breathable and have acceptably low levels of volatiles, pollutant and nitrous oxide, but differ in pressure or temperature.
@@ -86,13 +104,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃  P0 < P1  ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
                     ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫
-                    │                           │  P -> 0   │               │  P -> P0  │                  press -> │
-                    │                           │           │               │           │                           │
+                    │ <orange>                  │   <red>   │               │   <red>   │                 <orange>  │
+                    │                           │  P -> 0   │               │  P -> P0  │                           │
              (^_^)  │                    (^_^)  │           │         (^_^) │           │                   (^_^)   │
                     │                           │           │               │           │                           │
-                    │                           │        ↓↓ │               │ ↑↑        │                           │
-           press -> ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫
-                    ░           ░               ░           ░->>         ->>░           ░               ░           ░
+                    │                           │        ↓↓ │               │ ↑↑        │                  press -> │
+           press -> ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫
+                    #           #               #           #->           ->#           #               #           #
                     ┃           ┃               ┃           ┃               ┃           ┃               ┃           ┃
 
 
@@ -100,17 +118,18 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃           ┃               ┃           ┃               ┃           ┃
                     ┃           ┃               ┃           ┃               ┃           ┃
                     ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫               ┣━━━━━━━━━━━┫
+                    │   <red>   │               │   <red>   │               │ <orange>   
                     │  P -> 0   │               │  P -> P1  │               │            
-                    │           │               │           │               │            
-                    │   (^_^)   │               │   (^_^)   │               │               (^_^)    
-                    │           │               │           │               │            
+                    │           │               │           │               │               (^_^)    
+                    │   (^_^)   │               │   (^_^)   │               │            
                     │ ↓↓        │               │        ↑↑ │               │            
-                    ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫               ┣━▤▤━━━━━▤▤━┫
-                 <<-░           ░               ░           ░<<-            ░           ░
+                    ┣━##━━━━━##━┫               ┣━##━━━━━##━┫               ┣━##━━━━━##━┫
+                  <-#           #               #           #<-             #           #
                     ┃           ┃               ┃           ┃               ┃           ┃
 
 * BAD is active when any of the three gas sensors detects insufficient oxygen ( < 16 kPa partial pressure ), or excessive levels of volatiles, pollutant or nitrous oxide. 
 * It is indicated by an orange status light, or a red status light when the airlock is cycling.
+* The orange light warns that the airlock should not be used without a suit and helmet.
 * The airlock functions the same as for OK, but the airlock will be purged before equalising.
 * The airlock is purged by venting all atmosphere to the opposite side to the controlled door until a vacuum is reached.
 * The airlock will then proceed to equalise as for OK.
@@ -121,13 +140,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃ P0 << P1  ┃                   ┃           ┃               
                     ┃           ┃                   ┃           ┃               
                     ┣━━━━━━━━━━━┫                   ┣━━━━━━━━━━━┫               
-                    │  P ->     │                   │  P ->     │               
-                    │ (P1-P0)/2 │                   │ (P1-P0)/2 │               
-                    │           │        or         │           │               
+                    │  <blue>   │                   │  <blue>   │               
                     │           │                   │           │               
+                    │  P ->     │        or         │  P ->     │               
+                    │ (P1-P0)/2 │                   │ (P1-P0)/2 │               
                     │        ↓↓ │                   │        ↑↑ │               
-                    ┣━▤▤━━━━━▤▤━┫                   ┣━▤▤━━━━━▤▤━┫               
-                    ░           ░->>                ░           ░<<-            
+                    ┣━##━━━━━##━┫                   ┣━##━━━━━##━┫               
+                    #           #->                 #           #<-            
                     ┃           ┃                   ┃           ┃               
 
 * HIDP is active when the differential pressure between atmosphere 0 and 1 is close to exceeding what a single door can withstand.
@@ -144,13 +163,13 @@ There are four possible atmospheric conditions: BAD, OK, OKEQ and HIDP.
                     ┃ P0 << P   ┃               
                     ┃           ┃               
                     ┣━━━━━━━━━━━┫               
+                    │  <blue>   │               
+                    │           │               
                     │  P ->     │               
                     │ (P1-P0)/2 │               
-                    │           │               
-                    │           │               
                     │ ↓↓     ↑↑ │               
-                    ┣━▤▤━━━━━▤▤━┫               
-                 <<-░           ░<<-            
+                    ┣━##━━━━━##━┫               
+                  <-#           #<-            
                     ┃           ┃               
 
 * This occurs when the differential pressure is close to exceeding what two doors can withstand together.

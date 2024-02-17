@@ -16,8 +16,6 @@ alias isBAD r12
 alias isOKEQ r13
 alias isHIDP r14
 alias state r15 # {ready, start, purge, eqlize, end}
-sb StatusLight Lock 1
-sb PressureGauge Lock 1
 s d2 On 0
 s d3 On 0
 main: #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -28,6 +26,7 @@ s overrideLight On r0
 seqz r0 r0
 s d0 Mode r0
 s d1 Mode r0
+bnez r0 main
 lbn r0 Sensor SR0 Pressure Average # P0
 lbn r1 Sensor SR1 Pressure Average # P1
 lbn r2 Sensor SRL Pressure Average # PL
