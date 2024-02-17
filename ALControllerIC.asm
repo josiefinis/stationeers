@@ -28,9 +28,9 @@ s overrideLight On r0
 seqz r0 r0
 s d0 Mode r0
 s d1 Mode r0
-lbn r0 Sensor SR0 Pressure  # P0
-lbn r1 Sensor SR1 Pressure  # P1
-lbn r2 Sensor SRL Pressure  # PL
+lbn r0 Sensor SR0 Pressure Average # P0
+lbn r1 Sensor SR1 Pressure Average # P1
+lbn r2 Sensor SRL Pressure Average # PL
 move r7 0
 move r10 0
 loop0:                 # for ( i = 0, 1 ) {
